@@ -2,6 +2,7 @@
 
 [![codebeat badge](https://codebeat.co/badges/5125c3a9-6723-43fe-b157-77fca39c7a77)](https://codebeat.co/projects/github-com-cpapidas-valy-master)
 [![Build Status](https://travis-ci.org/cpapidas/valy.svg?branch=master)](https://travis-ci.org/cpapidas/valy)
+[![codecov](https://codecov.io/gh/cpapidas/valy/branch/master/graph/badge.svg)](https://codecov.io/gh/cpapidas/valy)
 
 Valy Validator is a struct validator manager which validates the fields according to predefined properties. It can
 validate the JSON struct and returns the errors as JSON string. It also supports custom errors message.

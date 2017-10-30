@@ -38,7 +38,6 @@ func TestValy(t *testing.T) {
 	}
 	customErrs := map[string]string{"CustomError": "It's just a custom error"}
 	errs := valy.Validate(u, customErrs)
-	fmt.Println(errs["Rate"])
 	if len(errs["Username"]) != 1 {
 		t.Log("Should return errors for invalid username.")
 		t.Fail()
