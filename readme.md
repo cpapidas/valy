@@ -75,3 +75,27 @@ fmt.Println(errs)
 
 You can run all the example above by
 `$ go run examples/examples.go`
+
+# Supported Validators
+
+### string
+
+```go
+type demoUser struct {
+	Field1       string  `validate:"required=true"`   // Checks if the field presents.
+	Field2       string  `validate:"min=10"`          // Checks if the string length is less than min value.
+	Field3       int     `validate:"max=23"`          // Checks if the string length is bigger than max value.
+	Field4       int     `validate:"max=23,err=Just a custom error"`
+}
+```
+
+### numeric
+
+```go
+type demoUser struct {
+	Field1       int      `validate:"required=true"`   // Checks if the field is != 0.
+	Field2       float32  `validate:"min=10"`          // Checks if field is less than 10.
+	Field3       uint     `validate:"max=23"`          // Checks if the field is grater than 23.
+	Field4       unit8    `validate:"max=23,err=Just a custom error"`
+}
+```
