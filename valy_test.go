@@ -3,7 +3,6 @@ package valy_test
 import (
 	"github.com/cpapidas/valy"
 	"testing"
-	"fmt"
 )
 
 type demoUser struct {

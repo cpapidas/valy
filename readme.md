@@ -88,8 +88,8 @@ You can run all the example above by
 type demoUser struct {
 	Field1       string  `validate:"required=true"`   // Checks if the field presents.
 	Field2       string  `validate:"min=10"`          // Checks if the string length is less than min value.
-	Field3       int     `validate:"max=23"`          // Checks if the string length is bigger than max value.
-	Field4       int     `validate:"max=23,err=Just a custom error"`
+	Field3       string  `validate:"max=23"`          // Checks if the string length is bigger than max value.
+	Field4       string  `validate:"max=23,err=Just a custom error"`
 }
 ```
 
