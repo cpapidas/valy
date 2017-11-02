@@ -1,8 +1,10 @@
 package valy_test
 
 import (
+	"encoding/json"
 	"github.com/cpapidas/valy"
 	"testing"
+	"reflect"
 )
 
 type demoUser struct {
@@ -27,7 +29,7 @@ type demoUser struct {
 	Married        bool    `validate:"required=true"`
 }
 
-func TestValy(t *testing.T) {
+func TestValidate_full(t *testing.T) {
 	u := demoUser{
 		Username:       "cpapidas",
 		Age:            0,
@@ -99,7 +101,7 @@ type demoInvalidNumericValidation struct {
 	Demo int16 `validate:"min=invalid min number"`
 }
 
-func TestValy_invalidNumericValidator(t *testing.T) {
+func TestValidate_invalidNumericValidator(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("The code did not panic")
@@ -113,7 +115,7 @@ type demoInvalidStringValidation struct {
 	Demo string `validate:"min=invalid min number"`
 }
 
-func TestValy_invalidStringValidator(t *testing.T) {
+func TestValidate_invalidStringValidator(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("The code did not panic")
@@ -127,7 +129,7 @@ type demoJsonValidation struct {
 	Demo string `json:"demo" validate:"min=10"`
 }
 
-func TestValy_jsonValidation(t *testing.T) {
+func TestValidate_jsonValidation(t *testing.T) {
 	d := demoJsonValidation{Demo: "123"}
 	errs := valy.JValidate(d)
 	if string(errs) != `{"Demo":["the field Demo should contains at least 10 characters"]}` {
@@ -142,7 +144,7 @@ func TestValy_jsonValidation(t *testing.T) {
 	}
 }
 
-func TestValy_invalidJsonValidation(t *testing.T) {
+func TestValidate_invalidJsonValidation(t *testing.T) {
 	defer func() {
 		if r := recover(); r == nil {
 			t.Errorf("The code did not panic")
@@ -151,4 +153,21 @@ func TestValy_invalidJsonValidation(t *testing.T) {
 	valy.JValidate(1)
 }
 
-
+func TestValidate_json(t *testing.T) {
+	var djvO demoJsonValidation
+	func(djv interface{}) {
+		djvJson := []byte(`{"demo":"12312312311123"}`)
+		err := json.Unmarshal(djvJson, djv)
+		if err != nil {
+			t.Log("unmarshal error", err)
+			t.Fail()
+		}
+		t.Log("struct", djv)
+		k := reflect.Indirect(reflect.ValueOf(djv)).Interface()
+		errs := valy.JValidate(k)
+		if errs != nil {
+			t.Log("validation should not returns any errors", string(errs))
+			t.Fail()
+		}
+	}(&djvO)
+}
