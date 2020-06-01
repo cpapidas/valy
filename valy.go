@@ -144,3 +144,25 @@ func parseFields(t reflect.Type, v reflect.Value, ce map[string]string) map[stri
 	}
 	return errs
 }
+
+// ivalidator describes the validator providers interfaces.
+type ivalidator interface {
+
+	// validate validates the fields the set the fieldProperties errors
+	validate()
+
+	// customErrors check if there are defined any custom errors and returns them. Custom errors have bigger
+	// priority than in line errors and default errors.
+	customErrors() []string
+}
+
+// validator struct embeds the fileProperties and is responsible to validate the fields
+type validator struct {
+	fieldProperties
+}
+
+// customErrors check if there are defined any custom errors and returns them. Custom errors have bigger
+// priority than in line errors and default errors.
+func (val *validator) customErrors() []string {
+	return val.errs
+}

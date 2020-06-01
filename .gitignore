@@ -1,3 +1,6 @@
 valy
 .idea
 .DS_Store
+/cmd/simplevalidation/simplevalidation
+/cmd/jsonvalidation/jsonvalidation
+/cmd/customerrs/customerrs

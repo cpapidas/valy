@@ -38,11 +38,14 @@ func (fp *fieldProperties) callValidator() []string {
 	if fp.kind == "string" {
 		v = newStringValidator(fp)
 		v.validate()
-		errs = append(errs, v.checkCustomErrors()...)
+		errs = append(errs, v.customErrors()...)
 	} else if isNumeric(fp.kind) {
 		v = newNumericValidator(fp)
 		v.validate()
-		errs = append(errs, v.checkCustomErrors()...)
+		errs = append(errs, v.customErrors()...)
+	}
+	if len(fp.customErrors) != 0 && fp.customErrors[fp.fieldName] != "" && len(errs) != 0 {
+		return []string{fp.customErrors[fp.fieldName]}
 	}
 	return errs
 }
