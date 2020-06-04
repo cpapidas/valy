@@ -17,9 +17,12 @@ func main() {
 		Age:      3,
 	}
 
-	errs := valy.JValidate(u)
-	if errs != nil {
+	validationErrs, err := valy.JValidate(u)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if validationErrs != nil {
 		// return the json object to the client
-		fmt.Println("Validation errors", string(errs))
+		fmt.Println("Validation errors", string(validationErrs))
 	}
 }

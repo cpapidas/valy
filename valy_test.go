@@ -3,13 +3,13 @@ package valy_test
 import (
 	"encoding/json"
 	"github.com/cpapidas/valy"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 type demoUser struct {
 	Username       string  `validate:"required=true,min=10,max=23"`
-	Password       string  `validate:"required=true,err=password is required"`
+	Password       string  `validate:"required=true,Err=password is required"`
 	Email          string  `validate:"required=false"`
 	Age            int     `validate:"required=true,min=10,max=23"`
 	Country        string  `validate:""`
@@ -26,10 +26,10 @@ type demoUser struct {
 	Results2       float64 `validate:"required=true"`
 	Phone          string  `validate:"max=10"`
 	CustomError    string  `validate:"max=10"`
-	Married        bool    `validate:"required=true"`
+	Married        bool
 }
 
-func TestValidate_full(t *testing.T) {
+func TestValidate_shouldReturnErrorForInvalidUsername(t *testing.T) {
 	u := demoUser{
 		Username:       "cpapidas",
 		Age:            0,
@@ -38,62 +38,167 @@ func TestValidate_full(t *testing.T) {
 		CustomError:    "AbigStringAbigString",
 	}
 	customErrs := map[string]string{"CustomError": "It's just a custom error"}
-	errs := valy.Validate(u, customErrs)
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Username"]) != 1 {
-		t.Log("Should return errors for invalid username.")
-		t.Fail()
+		t.Error("should contains Username property error for invalid username")
 	}
 	if errs["Username"][0] == "" {
-		t.Log("Error should not be nil.")
-		t.Fail()
+		t.Error("should contains an error in Username property for invalid username")
 	}
+}
+
+func TestValidate_shouldReturnErrorForInvalidPassword(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Password"]) != 1 {
-		t.Log("Should return errors for invalid password.")
-		t.Fail()
+		t.Error("should contains password property error for invalid password")
 	}
-	if errs["Password"][0] != "password is required" {
-		t.Log("Should return the error 'password is required'.")
-		t.Fail()
+	if errs["Password"][0] != "the field Password should not be empty" {
+		t.Error("should contains an error in Password property for invalid password")
 	}
+}
+
+func TestValidate_shouldNotReturnErrorForTheEmailProperty(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Email"]) > 0 {
-		t.Log("Email is options should not return any error.")
-		t.Fail()
+		t.Error("email is optional should not return any error")
 	}
+}
+
+func TestValidate_shouldReturnErrorForTheAgeProperty(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Age"]) != 2 {
-		t.Log("Should return two error about Age field.")
-		t.Fail()
+		t.Error("should return two errors for the Age field")
 	}
 	if errs["Age"][0] == "" {
-		t.Log("Error should not be nil.")
-		t.Fail()
+		t.Error("error should not be nil")
 	}
 	if errs["Age"][1] == "" {
-		t.Log("Error should not be nil.")
-		t.Fail()
+		t.Error("error should not be nil")
 	}
+}
+
+func TestValidate_shouldNotReturnErrorForTheCountryProperty(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Country"]) != 0 {
-		t.Log("Should not return any error.")
-		t.Fail()
+		t.Error("should not return any error")
 	}
+}
+
+func TestValidate_shouldReturnErrorForTheFavoriteNumberProperty(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["FavoriteNumber"]) != 1 {
-		t.Log("Should return an error about invalid FavoriteNumber.")
-		t.Fail()
+		t.Error("should return an error about invalid FavoriteNumber")
 	}
+	if errs["FavoriteNumber"][0] == "" {
+		t.Error("should contains an error in FavoriteNumber property for invalid favorite number")
+	}
+}
+
+func TestValidate_shouldReturnErrorForThePhoneProperty(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["Phone"]) != 1 {
-		t.Log("Should return an error about invalid Phone.")
-		t.Fail()
+		t.Error("should return an error for invalid Phone")
 	}
 	if errs["Phone"][0] == "" {
-		t.Log("Error should not be nil.")
-		t.Fail()
+		t.Error("should contains an error in Phone property for invalid phone")
 	}
+}
+
+func TestValidate_shouldReturnCustomError(t *testing.T) {
+	u := demoUser{
+		Username:       "cpapidas",
+		Age:            0,
+		FavoriteNumber: 10,
+		Phone:          "1234567891011",
+		CustomError:    "AbigStringAbigString",
+	}
+	customErrs := map[string]string{"CustomError": "It's just a custom error"}
+	errs, err := valy.Validate(u, customErrs)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
+
 	if len(errs["CustomError"]) != 1 {
-		t.Log("Should return an error about invalid CustomError.")
-		t.Fail()
+		t.Error("should return an error for invalid CustomError")
 	}
 	if errs["CustomError"][0] != "It's just a custom error" {
-		t.Log("Error should be `It's just a custom error`.")
-		t.Fail()
+		t.Errorf("expected `It's just a custom error`, but got: `%s`", errs["CustomError"][0])
 	}
 }
 
@@ -102,13 +207,11 @@ type demoInvalidNumericValidation struct {
 }
 
 func TestValidate_invalidNumericValidator(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
-	}()
 	u := demoInvalidNumericValidation{Demo: 0}
-	valy.Validate(u)
+	_, err := valy.Validate(u)
+	if err == nil {
+		t.Error("error should not be nil")
+	}
 }
 
 type demoInvalidStringValidation struct {
@@ -116,13 +219,11 @@ type demoInvalidStringValidation struct {
 }
 
 func TestValidate_invalidStringValidator(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
-	}()
 	u := demoInvalidStringValidation{Demo: ""}
-	valy.Validate(u)
+	_, err := valy.Validate(u)
+	if err == nil {
+		t.Error("error should not be nil")
+	}
 }
 
 type demoJsonValidation struct {
@@ -131,26 +232,23 @@ type demoJsonValidation struct {
 
 func TestValidate_jsonValidation(t *testing.T) {
 	d := demoJsonValidation{Demo: "123"}
-	errs := valy.JValidate(d)
+	errs, err := valy.JValidate(d)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
 	if string(errs) != `{"Demo":["the field Demo should contains at least 10 characters"]}` {
 		t.Log("Should return a valid error message")
 		t.Fail()
 	}
 	d = demoJsonValidation{Demo: "12345678900"}
-	errs = valy.JValidate(d)
+	errs, err = valy.JValidate(d)
+	if err != nil {
+		t.Fatalf("expected nill err but got: %v", err)
+	}
 	if errs != nil {
 		t.Log("Should return nil")
 		t.Fail()
 	}
-}
-
-func TestValidate_invalidJsonValidation(t *testing.T) {
-	defer func() {
-		if r := recover(); r == nil {
-			t.Errorf("The code did not panic")
-		}
-	}()
-	valy.JValidate(1)
 }
 
 func TestValidate_json(t *testing.T) {
@@ -164,7 +262,10 @@ func TestValidate_json(t *testing.T) {
 		}
 		t.Log("struct", djv)
 		k := reflect.Indirect(reflect.ValueOf(djv)).Interface()
-		errs := valy.JValidate(k)
+		errs, err := valy.JValidate(k)
+		if err != nil {
+			t.Fatalf("expected nill err but got: %v", err)
+		}
 		if errs != nil {
 			t.Log("validation should not returns any errors", string(errs))
 			t.Fail()

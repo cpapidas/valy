@@ -4,8 +4,8 @@
 [![Build Status](https://travis-ci.org/cpapidas/valy.svg?branch=master)](https://travis-ci.org/cpapidas/valy)
 [![codecov](https://codecov.io/gh/cpapidas/valy/branch/master/graph/badge.svg)](https://codecov.io/gh/cpapidas/valy)
 
-Valy Validator is a struct validator manager which validates the fields according to predefined properties. It can
-validate the JSON struct and returns the errors as JSON string. It also supports custom errors message.
+Valy is a struct validator manager that helps you to validate the fields according to the predefined properties. It can
+validate any struct and return the errors as types of map[string]string or JSON. Valy fully supports custom errors per field.
 
 # Installation
 
@@ -15,80 +15,82 @@ validate the JSON struct and returns the errors as JSON string. It also supports
 
 Simple Example
 ```go
-type demoUser struct {
-	Username       string  `validate:"required=true,min=10,max=23"`
-	Password       string  `validate:"required=true,err=password is required"`
-	Age            int     `validate:"required=true,min=10,max=23"`
+type user struct {
+	Username string `validate:"required=true,min=10,max=23"`
+	Password string `validate:"required=true,err=password is required"`
+	Age      int    `validate:"required=true,min=10,max=23"`
 }
-u := demoUser{
-    Username:       "cpapidas",
-    Age:            0,
+
+u := user{
+    Username: "cpapidas",
+    Age:      9,
 }
-errs := valy.Validate(u)
-if errs != nil {
-    fmt.Println(errs)
+validationErrs, err := valy.Validate(u)
+if err != nil {
+    fmt.Println(err)
+}
+if validationErrs != nil {
+    fmt.Println(validationErrs)
 }
 ```
 
 JSON Example
 ```go
-type demoUser struct {
-	Username       string  `json:"username" validate:"required=true,min=10,max=23"`
-	Password       string  `json:"password" validate:"required=true,err=password is required"`
-	Age            int     `validate:"required=true,min=10,max=23"`
-}
-u := demoUser{
-    Username:       "cpapidas",
-    Age:            0,
+type user struct {
+	Username string `json:"username" validate:"required=true,min=10,max=23"`
+	Password string `json:"password" validate:"required=true,err=password is required"`
+	Age      int    `validate:"required=true,min=10,max=23"`
 }
 
-errs := valy.JValidate(u)
+u := user{
+    Username: "cpapidas",
+    Age:      3,
+}
 
-if errs != nil {
+validationErrs, err := valy.JValidate(u)
+if err != nil {
+    fmt.Println(err)
+}
+if validationErrs != nil {
     // return the json object to the client
-    // ...
-    fmt.Println("Validation errors", string(errs))
-} else {
-    // the data are valid
-    fmt.Println("Valid data")
+    fmt.Println("Validation errors", string(validationErrs))
 }
 ```
 
 Custom Errors Example
 ```go
-type demoUser struct {
-	Username       string  `json:"username" validate:"required=true,min=10,max=23"`
-	Password       string  `json:"password" validate:"required=true,err=password is required"`
-	Age            int     `validate:"required=true,min=10,max=23"`
-}
-u := demoUser{
-    Username:       "cpapidas",
-    Age:            0,
+type user struct {
+	Username string `json:"username" validate:"required=true,min=10,max=23"`
+	Password string `json:"password" validate:"required=true,err=password is required"`
+	Age      int    `validate:"required=true,min=10,max=23"`
 }
 
-errMess := map[string]string {
+u := user{
+    Username: "cpapidas",
+    Age:      11,
+}
+
+errMess := map[string]string{
     "Username": "Username is required and should contain between 10 and 23 characters.",
 }
-
-jerrs := valy.JValidate(u, errMess)
-fmt.Println(string(jerrs))
-
-errs := valy.Validate(u, errMess)
-fmt.Println(errs)
+validationErrs, err := valy.Validate(u, errMess)
+if err != nil {
+    fmt.Println(err)
+}
+if validationErrs != nil {
+    fmt.Println(validationErrs)
+}
 ```
-
-You can run all the example above by
-`$ go run examples/examples.go`
 
 # Supported Validators
 
 ### string
 
 ```go
-type demoUser struct {
-	Field1       string  `validate:"required=true"`   // Checks if the field presents.
-	Field2       string  `validate:"min=10"`          // Checks if the string length is less than min value.
-	Field3       string  `validate:"max=23"`          // Checks if the string length is bigger than max value.
+type user struct {
+	Field1       string  `validate:"required=true"`   
+	Field2       string  `validate:"min=10"`          
+	Field3       string  `validate:"max=23"`          
 	Field4       string  `validate:"max=23,err=Just a custom error"`
 }
 ```
@@ -96,10 +98,10 @@ type demoUser struct {
 ### numeric
 
 ```go
-type demoUser struct {
-	Field1       int      `validate:"required=true"`   // Checks if the field is != 0.
-	Field2       float32  `validate:"min=10"`          // Checks if field is less than 10.
-	Field3       uint     `validate:"max=23"`          // Checks if the field is grater than 23.
+type user struct {
+	Field1       int      `validate:"required=true"`   
+	Field2       float32  `validate:"min=10"`          
+	Field3       uint     `validate:"max=23"`          
 	Field4       unit8    `validate:"max=23,err=Just a custom error"`
 }
 ```

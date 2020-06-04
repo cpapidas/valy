@@ -20,8 +20,11 @@ func main() {
 	errMess := map[string]string{
 		"Username": "Username is required and should contain between 10 and 23 characters.",
 	}
-	errs := valy.Validate(u, errMess)
-	if errs != nil {
-		fmt.Println(errs)
+	validationErrs, err := valy.Validate(u, errMess)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if validationErrs != nil {
+		fmt.Println(validationErrs)
 	}
 }

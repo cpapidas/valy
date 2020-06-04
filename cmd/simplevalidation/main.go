@@ -16,8 +16,11 @@ func main() {
 		Username: "cpapidas",
 		Age:      9,
 	}
-	errs := valy.Validate(u)
-	if errs != nil {
-		fmt.Println(errs)
+	validationErrs, err := valy.Validate(u)
+	if err != nil {
+		fmt.Println(err)
+	}
+	if validationErrs != nil {
+		fmt.Println(validationErrs)
 	}
 }
